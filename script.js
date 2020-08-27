@@ -1,79 +1,119 @@
 /**
- * This is a simple stone paper scissor game
- * played against computer.
+ * This is a simple rock paper scissor game,
+ * played against the computer.
  * Date:07/31/2020
  * @author:Ruchik Chaudhari
  */
 
- //computer's choice
- function computerPlay(){
+//create references to buttons
+const btnRock = document.querySelector("#rock");
+const btnScissor = document.querySelector("#scissor");
+const btnPaper = document.querySelector("#paper");
 
-    let options=["stone","paper","scissors"];
-    //get the random selection from the array
-    let computerSelection=Math.floor((Math.random()*options.length));
-    console.log("CS Selection= "+options[computerSelection].toLowerCase());
-    return options[computerSelection].toLowerCase();
+//refrences to other elements
+let resultOutput = document.querySelector("#display");
+let userScore = document.querySelector("#user");
+let compScore = document.querySelector("#computer");
+
+//add event listeners to those button
+btnRock.addEventListener("click", rockEvent);
+btnScissor.addEventListener("click", scissorEvent);
+btnPaper.addEventListener("click", paperEvent);
+
+//initialize the scores
+let user = 0;
+let comp = 0;
+
+/**
+ * When user chooses rock
+ */
+function rockEvent() {
+  let computerSelection = computerPlay();
+  playRound("rock", computerSelection);
+}
+/**
+ * When user chooses scissor
+ */
+function scissorEvent() {
+  let computerSelection = computerPlay();
+  playRound("scissor", computerSelection);
+}
+/**
+ * When user chooses paper
+ */
+function paperEvent() {
+  let computerSelection = computerPlay();
+  playRound("paper", computerSelection);
 }
 
- //player's choice
- function playerPlay(){
-     //get the player's selection
-    let userSelection = prompt("What's your selection?")
-    return userSelection.toLowerCase();
+/**
+ * Generate a random selection for computer play
+ */
+function computerPlay() {
+  let options = ["rock", "paper", "scissor"];
+  //get the random selection from the array
+  let computerSelection = Math.floor(Math.random() * options.length);
+  console.log("CS Selection= " + options[computerSelection].toLowerCase());
+  return options[computerSelection].toLowerCase();
 }
 
- //one round of game
- function gameRound(computerSelection,userSelection){
+/**
+ * The logic behind a single game between  
+ * the computer and the user. 
+ * @param {*} userSelection 
+ * @param {*} computerSelection 
+ */
+function playRound(userSelection, computerSelection) {
+  let result;
 
-     //conditions for winning
-    if((userSelection==="stone"&&computerSelection==="scissors")
-        ||(userSelection==="scissors"&&computerSelection==="paper")
-        ||(userSelection==="paper"&&computerSelection==="stone")){
-            console.log("You Won!")
-            return "Won";
-    }
+  //conditions for winning
+  if (
+    (userSelection === "rock" && computerSelection === "scissor") ||
+    (userSelection === "scissor" && computerSelection === "paper") ||
+    (userSelection === "paper" && computerSelection === "rock")
+  ) {
+    result = "Won";
+    user++;
+    userScore.textContent = user;
+    resultOutput.textContent = `Computer chose: ${computerSelection}, wahho you won this round. Keep it up!!`;
+  }
 
-    //conditions for loosing
-    else if((userSelection==="stone"&&computerSelection==="stone")
-        ||(userSelection==="scissors"&&computerSelection==="scissors")
-        ||(userSelection==="paper"&&computerSelection==="paper")){
-            console.log("It's a tie");
-            return "Tie";
-    }
+  //conditions for loosing
+  else if (
+    (userSelection === "rock" && computerSelection === "rock") ||
+    (userSelection === "scissor" && computerSelection === "scissor") ||
+    (userSelection === "paper" && computerSelection === "paper")
+  ) {
+    result = "Tie";
+    resultOutput.textContent = `Computer chose: ${computerSelection}, it's a tie`;
+  }
 
-    //else you lose
-    else{
-        console.log("You Lost")
-        return "Lost";
-    }
- }
+  //else you lose
+  else {
+    result = "Lost";
+    comp++;
+    compScore.textContent = comp;
+    resultOutput.textContent = `Computer chose: ${computerSelection}, you lost this round.`;
+  }
 
- //five rounds
- function gameRounds(){
-
-    
-     let countWon=0, countTie=0, result;
-
-     //play the game 5 times
-    for(i = 1; i < 6; i++){
-        result = gameRound(computerPlay(),playerPlay());
-        if (result ==="Won"){
-            countWon++;
-        }
-        else if(result=="Tie"){
-            countTie++;
-        }
-    }
-
-    //Return the results
-    if (countWon >= 3){
-        return "Congratulations you won";
-    }
-    else if( (countTie === 1) && (countWon==2) ){
-        return "Its a Tie, try agian";
-    }
-    else{
-        return "You lost, try again";
-    }
+  fiveRound(user, comp);
 }
-console.log(gameRounds());
+
+/**
+ * Keep track of the score and alert 
+ * when there is a winner.
+ * @param {*} userScore 
+ * @param {*} compScore 
+ */
+function fiveRound(userScore, compScore) {
+  if (userScore == 5 || compScore == 5) {
+    if (userScore == 5) {
+      resultOutput.textContent = "Congratulations!! You won this game!!(refresh to play agin)";
+    } else {
+      resultOutput.textContent = "Oops!! You lost this game.(refresh to play again)";
+    }
+    btnRock.disabled = true;
+    btnPaper.disabled = true;
+    btnScissor.disabled = true;
+  }
+}
